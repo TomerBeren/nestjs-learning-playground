@@ -8,13 +8,38 @@ Just me working through the NestJS docs and trying out different features. Not a
 
 ## What I've Covered
 
-- ✅ Controllers and Services
-- ✅ Dependency Injection
-- ✅ Guards, Pipes, Interceptors, Middleware
-- ✅ Database with TypeORM + PostgreSQL
-- ✅ Configuration and Environment Variables
-- ✅ Testing (Unit & E2E)
+**Overview:**
+- ✅ First steps
+- ✅ Controllers
+- ✅ Providers
+- ✅ Modules
+- ✅ Middleware
+- ✅ Exception filters
+- ✅ Pipes
+- ✅ Guards
+- ✅ Interceptors
+- ✅ Custom decorators
+
+**Fundamentals:**
+- ✅ Custom providers
+- ✅ Asynchronous providers
+- ✅ Dynamic modules
+- ✅ Injection scopes
+- ✅ Circular dependency
+- ✅ Module reference
+- ✅ Lazy-loading modules
+- ✅ Execution context
+- ✅ Lifecycle events
+- ✅ Discovery service
+- ✅ Platform agnosticism
+- ✅ Testing
+
+**Techniques:**
+- ✅ Configuration
+
+**Other:**
 - ✅ Docker Setup
+- ✅ Database (TypeORM + PostgreSQL)
 
 ## Setup
 
