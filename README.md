@@ -1,90 +1,128 @@
-# 🚀 NestJS Learning Playground# NestJS Providers Example
+# 🚀 NestJS Learning Playground# 🚀 NestJS Learning Playground
 
 
 
-A comprehensive NestJS learning repository showcasing enterprise patterns, modular architecture, and best practices. Features PostgreSQL + TypeORM, Joi validation, configuration management, guards, pipes, interceptors, Docker setup, and testing.This is a simple NestJS application that demonstrates the concept of **Providers** as described in the [NestJS documentation](https://docs.nestjs.com/providers).
+A comprehensive NestJS repository showcasing enterprise patterns, modular architecture, and best practices with PostgreSQL + TypeORM, Joi validation, and Docker setup.A comprehensive NestJS learning repository showcasing enterprise patterns, modular architecture, and best practices. Features PostgreSQL + TypeORM, Joi validation, configuration management, guards, pipes, interceptors, Docker setup, and testing.
 
 
 
-## 📋 Table of Contents## What This App Demonstrates
+## ✨ Features## 📋 Table of Contents
 
 - [Features](#-features)
 
-- [Architecture](#-architecture)This example shows:
+- **Complete NestJS App** - Modular architecture with real-world patterns- [Architecture](#-architecture)
 
-- [Quick Start](#-quick-start)
+- **PostgreSQL + TypeORM** - Database integration with auto-schema creation- [Quick Start](#-quick-start)
 
-- [Configuration](#-configuration)1. **Dependency Injection**: How services are injected into controllers
+- **Joi Validation** - Environment variable validation with schemas- [Configuration](#-configuration)
 
-- [API Endpoints](#-api-endpoints)2. **Providers**: How to create and register services as providers
+- **Advanced Patterns** - Guards, pipes, interceptors, middleware, decorators- [API Endpoints](#-api-endpoints)
 
-- [Testing](#-testing)3. **The `@Injectable()` decorator**: Making classes available for dependency injection
+- **Docker Setup** - PostgreSQL containerization for easy development- [Testing](#-testing)
 
-- [What You'll Learn](#-what-youll-learn)4. **Basic CRUD operations**: Create and read cats using a service
+- **Testing** - Unit tests and E2E tests with Jest- [What You'll Learn](#-what-youll-learn)
 
+- **Configuration** - Environment-based config management with namespaces
 
+## ✨ Features
 
-## ✨ Features## Project Structure
+## 🏗️ Architecture
 
+### Core NestJS Concepts
 
+```- **Modular Architecture** - Clean separation of concerns
 
-### Core NestJS Concepts```
+src/- **Dependency Injection** - Professional IoC patterns
 
-- **Modular Architecture** - Clean separation of concernssrc/
+├── config/          # Environment configs & validation- **Guards & Pipes** - Request validation and authentication
 
-- **Dependency Injection** - Professional IoC patterns├── cats/
+├── modules/         # Feature modules (cats, users, auth)- **Interceptors** - Response transformation and logging
 
-- **Guards & Pipes** - Request validation and authentication│   ├── dto/
+├── shared/          # Common components (guards, pipes, interceptors)- **Middleware** - Custom request processing
 
-- **Interceptors** - Response transformation and logging│   │   └── create-cat.dto.ts      # Data Transfer Object for creating cats
-
-- **Middleware** - Custom request processing│   ├── interfaces/
-
-- **Exception Filters** - Centralized error handling│   │   └── cat.interface.ts       # Cat interface definition
-
-│   ├── cats.controller.ts         # HTTP controller for cat endpoints
-
-### Database & Validation│   └── cats.service.ts            # Business logic for cat operations
-
-- **PostgreSQL** with TypeORM integration├── app.module.ts                  # Root module that registers providers
-
-- **Entity Management** - Auto-schema creation and migrations└── main.ts                       # Application bootstrap
-
-- **Joi Validation** - Environment variable validation```
-
-- **Class Validators** - DTO validation patterns
-
-## Key Concepts Demonstrated
-
-### Configuration & Deployment
-
-- **Environment-based Config** - Dev/Prod/Test configurations### 1. Service with `@Injectable()`
-
-- **Namespaced Configuration** - Modular config managementThe `CatsService` is decorated with `@Injectable()`, making it available for dependency injection:
-
-- **Docker Setup** - PostgreSQL containerization
-
-- **Health Checks** - Application monitoring endpoints```typescript
-
-@Injectable()
-
-## 🏗️ Architectureexport class CatsService {
-
-  private readonly cats: Cat[] = [];
+└── main.ts          # Application bootstrap- **Exception Filters** - Centralized error handling
 
 ```
 
-src/  create(cat: Cat) {
+### Database & Validation
 
-├── config/                  # Configuration management    this.cats.push(cat);
+## 🚀 Quick Start- **PostgreSQL** with TypeORM integration
 
-│   ├── app.config.ts       # Application settings  }
 
-│   ├── database.config.ts  # Database configuration
 
-│   ├── auth.config.ts      # Authentication settings  findAll(): Cat[] {
+```bash- **Entity Management** - Auto-schema creation and migrations└── main.ts                       # Application bootstrap
 
-│   ├── features.config.ts  # Feature flags    return this.cats;
+# Clone and install
+
+git clone https://github.com/TomerBeren/nestjs-learning-playground.git- **Joi Validation** - Environment variable validation```
+
+cd nestjs-learning-playground
+
+npm install- **Class Validators** - DTO validation patterns
+
+
+
+# Start database## Key Concepts Demonstrated
+
+docker-compose up -d
+
+### Configuration & Deployment
+
+# Run application
+
+npm run start:dev- **Environment-based Config** - Dev/Prod/Test configurations### 1. Service with `@Injectable()`
+
+```
+
+- **Namespaced Configuration** - Modular config managementThe `CatsService` is decorated with `@Injectable()`, making it available for dependency injection:
+
+**Visit:** http://localhost:3000/api/v1
+
+- **Docker Setup** - PostgreSQL containerization
+
+## 📡 Key Endpoints
+
+- **Health Checks** - Application monitoring endpoints```typescript
+
+- `GET /health` - Health check with database status
+
+- `GET /api/v1/cats` - Sample CRUD operations@Injectable()
+
+- `POST /api/v1/lazy-auth/login` - Lazy-loaded authentication
+
+## 🏗️ Architectureexport class CatsService {
+
+## 🎓 What You'll Learn
+
+  private readonly cats: Cat[] = [];
+
+- ✅ **NestJS Fundamentals** - Modules, controllers, services, DI
+
+- ✅ **Advanced Patterns** - Guards, interceptors, pipes, middleware```
+
+- ✅ **Database Integration** - TypeORM with PostgreSQL
+
+- ✅ **Configuration** - Environment-based config with validationsrc/  create(cat: Cat) {
+
+- ✅ **Testing** - Unit and E2E testing strategies
+
+- ✅ **Enterprise Architecture** - Scalable, maintainable code structure├── config/                  # Configuration management    this.cats.push(cat);
+
+
+
+## 🛠️ Tech Stack│   ├── app.config.ts       # Application settings  }
+
+
+
+**Framework:** NestJS 10.x | **Database:** PostgreSQL 15 | **ORM:** TypeORM | **Validation:** Joi | **Testing:** Jest | **Container:** Docker│   ├── database.config.ts  # Database configuration
+
+
+
+---│   ├── auth.config.ts      # Authentication settings  findAll(): Cat[] {
+
+
+
+Perfect for learning NestJS through hands-on examples and real-world patterns! 🎉│   ├── features.config.ts  # Feature flags    return this.cats;
 
 │   └── validation.schema.ts # Joi validation schema  }
 
