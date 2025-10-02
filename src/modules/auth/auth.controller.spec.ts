@@ -42,7 +42,7 @@ describe('AuthController', () => {
         } 
       };
       
-      jest.spyOn(authService, 'login').mockReturnValue(mockResult);
+      jest.spyOn(authService, 'login').mockResolvedValue(mockResult);
 
       const result = await controller.login(loginDto);
       expect(result).toBe(mockResult);
@@ -52,7 +52,7 @@ describe('AuthController', () => {
     it('should throw UnauthorizedException when credentials are invalid', async () => {
       const loginDto = { username: 'invalid', password: 'invalid' };
       
-      jest.spyOn(authService, 'login').mockReturnValue(null);
+      jest.spyOn(authService, 'login').mockResolvedValue(null);
 
       await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
     });

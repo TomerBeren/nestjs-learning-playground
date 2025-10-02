@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('cats')
 export class CatEntity {
@@ -17,9 +18,14 @@ export class CatEntity {
   @Column({ default: true })
   isActive: boolean;
 
+  @ManyToOne(() => User, user => user.cats)
+  owner: User;
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  
 }

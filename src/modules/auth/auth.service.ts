@@ -5,17 +5,17 @@ import { UsersService } from '../users/users.service';
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  validateUser(username: string, password: string) {
-    const user = this.usersService.findByUsername(username);
+  async validateUser(username: string, password: string): Promise<any> {
+    const user = await this.usersService.findByUsername(username);
     if (user && user.password === password) {
-      const { password: _, ...result } = user;
+      const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  login(username: string, password: string) {
-    const user = this.validateUser(username, password);
+  async login(username: string, password: string): Promise<{ access_token: string; user: any } | null> {
+    const user = await this.validateUser(username, password);
     if (user) {
       return {
         access_token: 'fake-jwt-token',
@@ -25,12 +25,12 @@ export class AuthService {
     return null;
   }
 
-  getUserByToken(token: string) {
+  async getUserByToken(token: string): Promise<any> {
     // Simple mock - in real app you'd decode JWT
     if (token === 'fake-jwt-token') {
-      const user = this.usersService.findByUsername('admin');
+      const user = await this.usersService.findByUsername('admin');
       if (user) {
-        const { password: _, ...result } = user;
+        const { password, ...result } = user;
         return result;
       }
     }

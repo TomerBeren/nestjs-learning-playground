@@ -1,41 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto';
-import { User, PublicUser } from './interfaces';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    { id: 1, name: 'John', email: 'john@test.com', username: 'admin', password: 'admin123', roles: ['admin'] },
-    { id: 2, name: 'Jane', email: 'jane@test.com', username: 'user', password: 'user123', roles: ['user'] },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-  findAll(): PublicUser[] {
-    return this.users.map(({ password, ...user }) => user);
+  create(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
   }
 
-  findOne(id: number): PublicUser | undefined {
-    const user = this.users.find(user => user.id === id);
-    if (user) {
-      const { password, ...publicUser } = user;
-      return publicUser;
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User #${id} not found`);
     }
-    return undefined;
+    return user;
   }
 
-  findByUsername(username: string): User | undefined {
-    return this.users.find(user => user.username === username);
+  async findByUsername(username: string): Promise<User | undefined> {
+    const user = await this.usersRepository.findOne({ where: { username } });
+    return user ?? undefined;
   }
 
-  create(createUserDto: CreateUserDto): PublicUser {
-    const newUser: User = {
-      id: this.users.length + 1,
-      username: createUserDto.username || `user${this.users.length + 1}`,
-      password: createUserDto.password || 'defaultpass',
-      roles: createUserDto.roles || ['user'],
-      ...createUserDto,
-    };
-    this.users.push(newUser);
-    const { password, ...publicUser } = newUser;
-    return publicUser;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.usersRepository.preload({
+      id: id,
+      ...updateUserDto,
+    });
+    if (!user) {
+      throw new NotFoundException(`User #${id} not found`);
+    }
+    return this.usersRepository.save(user);
+  }
+
+  async remove(id: number): Promise<void> {
+    const result = await this.usersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`User #${id} not found`);
+    }
   }
 }

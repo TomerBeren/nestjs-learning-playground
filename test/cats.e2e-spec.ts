@@ -1,5 +1,6 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
 import { CatsModule } from '../src/modules/cats/cats.module';
 import { CatsService } from '../src/modules/cats/cats.service';
 import { INestApplication } from '@nestjs/common';
@@ -10,7 +11,7 @@ describe('Cats (e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [CatsModule],
+      imports: [AppModule], // Import AppModule to have all entities registered
     })
       .overrideProvider(CatsService)
       .useValue(catsService)

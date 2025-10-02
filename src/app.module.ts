@@ -6,7 +6,6 @@ import { AppService } from './app.service';
 import { logger } from './shared/common/middleware/logger/logger.middleware';
 import { CatsModule } from './modules/cats/cats.module';
 import { UsersModule } from './modules/users/users.module';
-import { LazyAuthController } from './shared/common/controllers/lazy-auth.controller';
 import { appConfig } from './config';
 import { validationSchema } from './config/validation.schema';
 
@@ -32,13 +31,13 @@ import { validationSchema } from './config/validation.schema';
     CatsModule, 
     UsersModule,
   ],
-  controllers: [AppController, LazyAuthController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(logger)
-      .forRoutes('cats', 'users', 'lazy-auth');
+      .forRoutes('cats', 'users');
   }
 }
