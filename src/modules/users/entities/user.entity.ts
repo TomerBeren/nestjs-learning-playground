@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Exclude } from "class-transformer";
 import { CatEntity } from "../../cats/entities/cat.entity";
 
 @Entity()
@@ -15,6 +16,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
+  @Exclude()
   @Column()
   password: string;
 
