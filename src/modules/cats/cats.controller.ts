@@ -11,15 +11,15 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { CreateCatDto } from "./dto/create-cat.dto";
-import { HttpExceptionFilter } from "../../shared/exceptions/http-exception.filter";
+import { HttpExceptionFilter } from "../../core/exceptions/http-exception.filter";
 import { CatsService } from "./cats.service";
-import { RolesGuard } from "../../shared/common/guards/roles.guard";
-import { Roles } from "../../shared/common/decorators/roles.decorator";
-import { User } from "../../shared/common/decorators/user.decorator";
-import { LoggingInterceptor } from "../../shared/common/interceptors/logging.interceptor";
-import { CacheInterceptor } from "../../shared/common/interceptors/cache.interceptor";
-import { TransformInterceptor } from "../../shared/common/interceptors/transform.interceptor";
-import { TimeoutInterceptor } from "../../shared/common/interceptors/timeout.interceptor";
+import { RolesGuard } from "../../core/common/guards/roles.guard";
+import { Roles } from "../../core/common/decorators/roles.decorator";
+import { User } from "../../core/common/decorators/user.decorator";
+import { LoggingInterceptor } from "../../core/common/interceptors/logging.interceptor";
+import { CacheInterceptor } from "../../core/common/interceptors/cache.interceptor";
+import { TransformInterceptor } from "../../core/common/interceptors/transform.interceptor";
+import { TimeoutInterceptor } from "../../core/common/interceptors/timeout.interceptor";
 
 @Controller("cats")
 @UseGuards(RolesGuard)

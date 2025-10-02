@@ -3,7 +3,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { logger } from './shared/common/middleware/logger/logger.middleware';
+import { logger } from './core/common/middleware/logger/logger.middleware';
 import { CatsModule } from './modules/cats/cats.module';
 import { UsersModule } from './modules/users/users.module';
 import { appConfig } from './config';

@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DataSource, Repository } from "typeorm";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
+    private readonly dataSource: DataSource
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<User> {
@@ -27,6 +28,13 @@ export class UsersService {
       throw new NotFoundException(`User #${id} not found`);
     }
     return user;
+  }
+
+  async createMany(users: User[]) {
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(users[0]);
+      await manager.save(users[1]);
+    });
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
