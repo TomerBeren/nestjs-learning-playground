@@ -1,0 +1,48 @@
+# Simple Auth Testing Commands - PowerShell
+
+# Make sure server is running in another terminal:
+# npm run start:dev
+
+# ==========================================
+# STEP 1: Create a user named "john"
+# ==========================================
+Invoke-RestMethod -Uri http://localhost:3000/api/v1/users -Method POST -Body '{"username":"john","firstName":"John","lastName":"Doe","password":"changeme","isActive":true}' -ContentType "application/json"
+
+
+# ==========================================
+# STEP 2: Login to get JWT token
+# ==========================================
+Invoke-RestMethod -Uri http://localhost:3000/api/v1/auth/login -Method POST -Body '{"username":"john","password":"changeme"}' -ContentType "application/json"
+
+
+# ==========================================
+# STEP 3: Save the token and get profile
+# First, save the token from step 2 response:
+# ==========================================
+$token = "PASTE_YOUR_TOKEN_HERE"
+Invoke-RestMethod -Uri http://localhost:3000/api/v1/auth/profile -Method GET -Headers @{Authorization="Bearer $token"}
+
+
+# ==========================================
+# STEP 4: Test invalid credentials (should return null)
+# ==========================================
+Invoke-RestMethod -Uri http://localhost:3000/api/v1/auth/login -Method POST -Body '{"username":"john","password":"wrongpassword"}' -ContentType "application/json"
+
+
+# ==========================================
+# OR DO IT ALL IN ONE GO:
+# ==========================================
+# Create user
+$user = Invoke-RestMethod -Uri http://localhost:3000/api/v1/users -Method POST -Body '{"username":"john","firstName":"John","lastName":"Doe","password":"changeme","isActive":true}' -ContentType "application/json"
+Write-Host "User created:" -ForegroundColor Green
+$user | ConvertTo-Json
+
+# Login and get token
+$loginResponse = Invoke-RestMethod -Uri http://localhost:3000/api/v1/auth/login -Method POST -Body '{"username":"john","password":"changeme"}' -ContentType "application/json"
+Write-Host "`nLogin successful! Token:" -ForegroundColor Green
+Write-Host $loginResponse.access_token.Substring(0,50)...
+
+# Get profile with token
+$profile = Invoke-RestMethod -Uri http://localhost:3000/api/v1/auth/profile -Method GET -Headers @{Authorization="Bearer $($loginResponse.access_token)"}
+Write-Host "`nProfile:" -ForegroundColor Green
+$profile | ConvertTo-Json

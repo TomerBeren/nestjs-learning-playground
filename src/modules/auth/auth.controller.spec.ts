@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -14,12 +15,23 @@ describe('AuthController', () => {
       getUserByToken: jest.fn(),
     };
 
+    const mockJwtService = {
+      sign: jest.fn(),
+      verify: jest.fn(),
+      verifyAsync: jest.fn(),
+      signAsync: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
         {
           provide: AuthService,
           useValue: mockAuthService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
         },
       ],
     }).compile();
@@ -52,7 +64,7 @@ describe('AuthController', () => {
     it('should throw UnauthorizedException when credentials are invalid', async () => {
       const loginDto = { username: 'invalid', password: 'invalid' };
       
-      jest.spyOn(authService, 'login').mockResolvedValue(null);
+      jest.spyOn(authService, 'login').mockRejectedValue(new UnauthorizedException('Invalid credentials'));
 
       await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
     });

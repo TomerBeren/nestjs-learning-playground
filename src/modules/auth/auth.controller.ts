@@ -1,42 +1,23 @@
-import { Controller, Post, Body, Get, Headers, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from './guards/auth.guard';
+import { HttpCode, HttpStatus } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(loginDto.username, loginDto.password);
-    if (!result) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    return result;
+    return await this.authService.login(loginDto.username, loginDto.password);
   }
 
-  @Post('validate')
-  async validateUser(@Body() loginDto: LoginDto) {
-    const user = this.authService.validateUser(loginDto.username, loginDto.password);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    return { user };
-  }
-
+  @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Headers('authorization') auth: string) {
-    if (!auth) {
-      throw new UnauthorizedException('No token provided');
-    }
-    
-    const token = auth.replace('Bearer ', '');
-    const user = this.authService.getUserByToken(token);
-    
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
-    }
-    
-    return { user };
+  async getProfile(@Request() req) {
+    // The user payload from JWT is automatically attached to req.user by AuthGuard
+    return req.user;
   }
 }

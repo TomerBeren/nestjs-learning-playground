@@ -1,39 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { UsersService } from "../users/users.service";
+import { BcryptUtil } from "../../core/common/utils/bcrypt.util";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService
+  ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(username: string, pass: string): Promise<{ id: number; username: string }> {
     const user = await this.usersService.findByUsername(username);
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    return null;
+
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await BcryptUtil.comparePassword(
+      pass,
+      user.password
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Return user data without password
+    const { password, ...result } = user;
+    return result;
   }
 
-  async login(username: string, password: string): Promise<{ access_token: string; user: any } | null> {
+  async login(
+    username: string,
+    password: string
+  ): Promise<{ access_token: string }> {
+    // validateUser will throw UnauthorizedException if credentials are invalid
     const user = await this.validateUser(username, password);
-    if (user) {
-      return {
-        access_token: 'fake-jwt-token',
-        user,
-      };
-    }
-    return null;
+    const payload = { sub: user.id, username: user.username };
+    
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async getUserByToken(token: string): Promise<any> {
-    // Simple mock - in real app you'd decode JWT
-    if (token === 'fake-jwt-token') {
-      const user = await this.usersService.findByUsername('admin');
-      if (user) {
-        const { password, ...result } = user;
-        return result;
+    try {
+      // Decode and verify the JWT token
+      const payload = await this.jwtService.verifyAsync(token);
+      const user = await this.usersService.findOne(payload.sub);
+      
+      if (!user) {
+        return null;
       }
+      
+      // Return user without password
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      return null;
     }
-    return null;
   }
 }
