@@ -1,0 +1,17 @@
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Post } from '../../posts/entities/post.entity';
+
+@Entity('authors')
+export class Author {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: true })
+  firstName?: string;
+
+  @Column({ nullable: true })
+  lastName?: string;
+
+  @OneToMany(() => Post, post => post.author)
+  posts: Post[];
+}

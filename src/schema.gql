@@ -1,0 +1,26 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Author {
+  firstName: String
+  id: Int!
+  lastName: String
+  posts: [Post!]!
+}
+
+type Post {
+  author: Author!
+  content: String
+  id: Int!
+  title: String!
+  votes: Int
+}
+
+type Query {
+  findAllAuthor: [Author!]!
+  findOneAuthor(id: Int!): Author
+  post(id: Int!): Post
+  posts: [Post!]!
+  searchAuthors(firstName: String, lastName: String! = "", limit: Int! = 10, offset: Int! = 0): [Author!]!
+}

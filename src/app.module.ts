@@ -7,9 +7,12 @@ import { CatsModule } from "./modules/cats/cats.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { TasksModule } from "./modules/tasks/tasks.module";
+import { AuthorsModule } from "./modules/authors/authors.module";
+import { PostsModule } from "./modules/posts/posts.module";
 import { validationSchema } from "./config/validation.schema";
 import { CacheModule } from "@nestjs/cache-manager";
 import { ScheduleModule } from "@nestjs/schedule";
+import { GraphqlConfigModule } from "./shared/graphql/graphql.module";
 import { appConfig } from "./config";
 
 @Module({
@@ -30,6 +33,8 @@ import { appConfig } from "./config";
         abortEarly: false,
       },
     }),
+    // GraphQL configuration
+    GraphqlConfigModule,
     // Initialize ScheduleModule FIRST before any module that uses @Cron
     ScheduleModule.forRoot(),
     CacheModule.register({
@@ -41,6 +46,8 @@ import { appConfig } from "./config";
     UsersModule,
     AuthModule,
     TasksModule,
+    AuthorsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

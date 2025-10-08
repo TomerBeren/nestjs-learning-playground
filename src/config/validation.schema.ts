@@ -18,6 +18,13 @@ export const validationSchema = Joi.object({
   JWT_SECRET: Joi.string().min(16).default('your-secret-key'),
   JWT_EXPIRES_IN: Joi.string().default('7d'),
   
+  // GraphQL config
+  GRAPHQL_PLAYGROUND: Joi.boolean().default(true),
+  GRAPHQL_DEBUG: Joi.boolean().default(true),
+  GRAPHQL_SCHEMA_FILE: Joi.string().default('src/schema.gql'),
+  GRAPHQL_SORT_SCHEMA: Joi.boolean().default(true),
+  GRAPHQL_INTROSPECTION: Joi.boolean().default(true),
+  
   // Other config
   CORS_ENABLED: Joi.boolean().default(true),
 });

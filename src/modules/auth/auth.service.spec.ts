@@ -120,10 +120,9 @@ describe('AuthService', () => {
       });
     });
 
-    it('should return null when credentials are invalid', async () => {
+    it('should throw UnauthorizedException when credentials are invalid', async () => {
       jest.spyOn(authService, 'validateUser').mockRejectedValue(new UnauthorizedException());
-      const result = await authService.login('invalid', 'invalid');
-      expect(result).toBeNull();
+      await expect(authService.login('invalid', 'invalid')).rejects.toThrow(UnauthorizedException);
     });
   });
 
