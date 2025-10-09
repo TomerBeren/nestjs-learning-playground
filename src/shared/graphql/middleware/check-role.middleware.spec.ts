@@ -101,7 +101,7 @@ describe('checkRoleMiddleware', () => {
         ForbiddenException
       );
       await expect(checkRoleMiddleware(mockContext, mockNext)).rejects.toThrow(
-        'Insufficient permissions to access "sensitiveField" field. Required role: ADMIN'
+        'Insufficient permissions to access this field. Required role: ADMIN'
       );
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -120,7 +120,7 @@ describe('checkRoleMiddleware', () => {
         ForbiddenException
       );
       await expect(checkRoleMiddleware(mockContext, mockNext)).rejects.toThrow(
-        'Insufficient permissions to access "sensitiveField" field. Required role: MODERATOR'
+        'Insufficient permissions to access this field. Required role: MODERATOR'
       );
       expect(mockNext).not.toHaveBeenCalled();
     });

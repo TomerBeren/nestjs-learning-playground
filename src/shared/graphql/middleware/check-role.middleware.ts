@@ -1,6 +1,7 @@
 import { FieldMiddleware, MiddlewareContext, NextFn } from '@nestjs/graphql';
 import { ForbiddenException } from '@nestjs/common';
 import { Role } from '../../../core/common/enums/role.enum';
+import { hasRolePermission, ERROR_MESSAGES } from '../../../core/common/constants';
 
 export const checkRoleMiddleware: FieldMiddleware = async (
   ctx: MiddlewareContext,
@@ -23,28 +24,15 @@ export const checkRoleMiddleware: FieldMiddleware = async (
    * For now, we'll check if user exists in context (from auth)
    * If authenticated, grant higher privileges; otherwise, default to USER
    */
-  const userRole = context?.user?.role || (context?.user ? Role.USER : Role.USER);
+  const user = context.req?.user || context.extra?.user || context.user;
+  const userRole: Role = user?.role ?? Role.USER;
 
   // Check if user has sufficient permissions
-  if (!hasPermission(userRole, requiredRole)) {
+  if (!hasRolePermission(userRole, requiredRole)) {
     throw new ForbiddenException(
-      `Insufficient permissions to access "${info.fieldName}" field. Required role: ${requiredRole}`,
+      `${ERROR_MESSAGES.GRAPHQL.INSUFFICIENT_PERMISSIONS}. Required role: ${requiredRole}`,
     );
   }
 
   return next();
 };
-
-/**
- * Check if user role has permission to access required role
- * Role hierarchy: ADMIN > MODERATOR > USER
- */
-function hasPermission(userRole: Role, requiredRole: Role): boolean {
-  const roleHierarchy = {
-    [Role.ADMIN]: 3,
-    [Role.MODERATOR]: 2,
-    [Role.USER]: 1,
-  };
-
-  return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
-}
