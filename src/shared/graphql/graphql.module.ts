@@ -6,6 +6,7 @@ import { join } from 'path';
 import graphqlConfig from '../../config/graphql.config';
 import { AuthModule } from '../../modules/auth/auth.module';
 import { AuthService } from '../../modules/auth/auth.service';
+import { ComplexityPlugin } from './plugins/complexity.plugin';
 
 @Module({
   imports: [
@@ -49,5 +50,6 @@ import { AuthService } from '../../modules/auth/auth.service';
       }),
     }),
   ],
+  providers: [ComplexityPlugin],
 })
 export class GraphqlConfigModule {}

@@ -36,7 +36,10 @@ export class AuthorsResolver extends BaseResolver(Author) {
   // - findOneAuthor(id): calls authorsService.findOne(id)
 
   // Custom query specific to Authors
-  @Query(() => [Author], { name: "searchAuthors" })
+  @Query(() => [Author], { 
+    name: "searchAuthors",
+    complexity: (options) => options.args.limit * 2,  // Dynamic based on limit
+  })
   async searchAuthors(@Args() getAuthorArgs: GetAuthorArgs): Promise<Author[]> {
     const { firstName, lastName, offset, limit } = getAuthorArgs;
     const results = this.authorsService.findByName(firstName, lastName);
@@ -45,13 +48,13 @@ export class AuthorsResolver extends BaseResolver(Author) {
     return results.slice(offset, offset + limit);
   }
 
-  @ResolveField("posts", () => [Post])
+  @ResolveField("posts", () => [Post], { complexity: 5 })
   async posts(@Parent() author: Author): Promise<Post[]> {
     // Uses DataLoader to batch requests - solves N+1 problem!
     return this.dataloaderService.getPostsByAuthorLoader().load(author.id);
   }
 
-  @Mutation(() => Post, { name: "upvotePost" })
+  @Mutation(() => Post, { name: "upvotePost", complexity: 3 })
   async upvotePost(@Args('input') input: UpvotePostInput) {
     return this.postsService.upvoteById({ id: input.postId });
   }

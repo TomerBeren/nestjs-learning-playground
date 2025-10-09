@@ -27,17 +27,17 @@ export class PostsResolver {
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
-  @Query(() => [Post], { name: "posts" })
+  @Query(() => [Post], { name: "posts", complexity: 2 })
   findAll(): Post[] {
     return this.postsService.findAll();
   }
 
-  @Query(() => Post, { name: "post", nullable: true })
+  @Query(() => Post, { name: "post", nullable: true, complexity: 1 })
   findOne(@Args("id", { type: () => Int }) id: number): Post | undefined {
     return this.postsService.findOne(id);
   }
 
-  @Mutation(() => Comment)
+  @Mutation(() => Comment, { complexity: 5 })
   async addComment(
     @Args("postId", { type: () => Int }) postId: number,
     @Args("comment", { type: () => CommentInput }) comment: CommentInput
