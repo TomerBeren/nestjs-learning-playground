@@ -12,6 +12,9 @@ export class Author {
   @Column({ nullable: true })
   lastName?: string;
 
+  @Column({ nullable: true })
+  email?: string;
+
   @OneToMany(() => Post, post => post.author)
   posts: Post[];
 }

@@ -44,6 +44,65 @@ export class Comment {
 [Field Value] Comment.text = "This is a comment"
 ```
 
+### 3. `checkRoleMiddleware` ⭐ NEW
+
+Implements field-level role-based access control (RBAC).
+
+**Use Case:** Restrict sensitive fields to users with specific roles
+
+**Role Hierarchy:** ADMIN > MODERATOR > USER
+
+**Example:**
+```typescript
+import { checkRoleMiddleware } from '../../../shared/graphql/middleware';
+import { Role } from '../../../core/common/enums/role.enum';
+
+@ObjectType()
+export class Author {
+  @Field()
+  firstName: string;  // Public field
+
+  @Field({ 
+    middleware: [checkRoleMiddleware],
+    description: 'Only accessible by MODERATOR and ADMIN'
+  })
+  @Extensions({ role: Role.MODERATOR })
+  email: string;  // Protected field
+}
+```
+
+**Behavior:**
+- ✅ ADMIN can access all fields (USER, MODERATOR, ADMIN)
+- ✅ MODERATOR can access USER and MODERATOR fields
+- ✅ USER can only access USER fields
+- ❌ Lower roles accessing higher fields → `ForbiddenException`
+
+**Real-World Example:**
+```typescript
+@ObjectType()
+export class UserType {
+  @Field()
+  username: string;  // Public
+
+  @Field({ middleware: [checkRoleMiddleware] })
+  @Extensions({ role: Role.MODERATOR })
+  isActive: boolean;  // Moderators can see user status
+
+  @Field({ middleware: [checkRoleMiddleware] })
+  @Extensions({ role: Role.ADMIN })
+  password: string;  // Only admins can see passwords
+}
+```
+
+**Error Response:**
+```json
+{
+  "errors": [{
+    "message": "Insufficient permissions to access \"password\" field. Required role: ADMIN"
+  }]
+}
+```
+
 ## How Field Middleware Works
 
 ```typescript
@@ -108,23 +167,34 @@ firstName: string;
 
 ### Author Model
 - `firstName` and `lastName` use `uppercaseMiddleware`
-- All author names will be returned in uppercase
+  - All author names will be returned in uppercase
+- `email` field uses `checkRoleMiddleware` with `@Extensions({ role: Role.MODERATOR })`
+  - Only MODERATOR and ADMIN users can access author emails
 
 ### Comment Model  
 - `text` field uses `logFieldAccessMiddleware`
-- Every time a comment's text is accessed, it's logged to the console
+  - Every time a comment's text is accessed, it's logged to the console
+
+### User Model
+- `password` field uses `checkRoleMiddleware` with `@Extensions({ role: Role.ADMIN })`
+  - Only ADMIN users can access password fields
+- `isActive` field uses `checkRoleMiddleware` with `@Extensions({ role: Role.MODERATOR })`
+  - Only MODERATOR and ADMIN users can see user status
 
 ## Testing
 
 Run tests for field middleware:
 ```bash
 npm test -- middleware.spec.ts
+npm test -- check-role.middleware.spec.ts
 ```
 
 All middleware includes comprehensive unit tests covering:
 - ✅ Normal string values
 - ✅ Non-string values (numbers, objects, arrays)
 - ✅ Null and undefined values
+- ✅ Role hierarchy (ADMIN > MODERATOR > USER)
+- ✅ Permission checks (allow/deny)
 - ✅ Edge cases
 
 ## Performance Considerations
