@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorsResolver } from './authors.resolver';
 import { AuthorsService } from './authors.service';
+import { PostsService } from '../posts/posts.service';
 import { DataloaderService } from '../../shared/dataloader/dataloader.service';
 import { Author } from './models/author.model';
 import { Post } from '../posts/models/post.model';
@@ -9,6 +10,7 @@ import { GetAuthorArgs } from './dto/get-author.args';
 describe('AuthorsResolver', () => {
   let resolver: AuthorsResolver;
   let authorsService: AuthorsService;
+  let postsService: PostsService;
   let dataloaderService: DataloaderService;
 
   const mockAuthorsService = {
@@ -16,6 +18,12 @@ describe('AuthorsResolver', () => {
     findOne: jest.fn(),
     findByName: jest.fn(),
     findByIds: jest.fn(),
+  };
+
+  const mockPostsService = {
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    upvoteById: jest.fn(),
   };
 
   const mockPostsByAuthorLoader = {
@@ -35,6 +43,10 @@ describe('AuthorsResolver', () => {
           useValue: mockAuthorsService,
         },
         {
+          provide: PostsService,
+          useValue: mockPostsService,
+        },
+        {
           provide: DataloaderService,
           useValue: mockDataloaderService,
         },
@@ -43,6 +55,7 @@ describe('AuthorsResolver', () => {
 
     resolver = module.get<AuthorsResolver>(AuthorsResolver);
     authorsService = module.get<AuthorsService>(AuthorsService);
+    postsService = module.get<PostsService>(PostsService);
     dataloaderService = module.get<DataloaderService>(DataloaderService);
   });
 
@@ -241,6 +254,34 @@ describe('AuthorsResolver', () => {
       expect(mockPostsByAuthorLoader.load).toHaveBeenNthCalledWith(2, author2.id);
       expect(result1).toEqual(posts1);
       expect(result2).toEqual(posts2);
+    });
+  });
+
+  describe('upvotePost (Mutation)', () => {
+    const mockPost: Post = {
+      id: 1,
+      title: 'Test Post',
+      content: 'Test Content',
+      votes: 5,
+      author: { id: 1, firstName: 'John', lastName: 'Doe', posts: [] },
+    } as Post;
+
+    it('should upvote a post successfully', async () => {
+      mockPostsService.upvoteById.mockReturnValue(mockPost);
+
+      const result = await resolver.upvotePost({ postId: 1 });
+
+      expect(mockPostsService.upvoteById).toHaveBeenCalledWith({ id: 1 });
+      expect(result).toEqual(mockPost);
+    });
+
+    it('should return undefined when post does not exist', async () => {
+      mockPostsService.upvoteById.mockReturnValue(undefined);
+
+      const result = await resolver.upvotePost({ postId: 999 });
+
+      expect(mockPostsService.upvoteById).toHaveBeenCalledWith({ id: 999 });
+      expect(result).toBeUndefined();
     });
   });
 });

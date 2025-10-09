@@ -12,6 +12,9 @@ export class Post {
   @Column({ nullable: true, type: 'text' })
   content?: string;
 
+  @Column({ default: 0 })
+  votes?: number;
+
   @ManyToOne(() => Author, author => author.posts)
   author: Author;
 }

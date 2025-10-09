@@ -9,6 +9,23 @@ type Author {
   posts: [Post!]!
 }
 
+type Comment {
+  author: String!
+  id: Int!
+  postId: Int!
+  text: String!
+}
+
+input CommentInput {
+  author: String!
+  text: String!
+}
+
+type Mutation {
+  addComment(comment: CommentInput!, postId: Int!): Comment!
+  upvotePost(input: UpvotePostInput!): Post!
+}
+
 type Post {
   author: Author!
   content: String
@@ -23,4 +40,12 @@ type Query {
   post(id: Int!): Post
   posts: [Post!]!
   searchAuthors(firstName: String, lastName: String! = "", limit: Int! = 10, offset: Int! = 0): [Author!]!
+}
+
+type Subscription {
+  commentAdded: Comment!
+}
+
+input UpvotePostInput {
+  postId: Int!
 }

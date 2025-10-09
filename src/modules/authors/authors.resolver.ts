@@ -1,15 +1,26 @@
-import { Resolver, Query, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
-import { Author } from './models/author.model';
-import { AuthorsService } from './authors.service';
-import { Post } from '../posts/models/post.model';
-import { DataloaderService } from '../../shared/dataloader/dataloader.service';
-import { GetAuthorArgs } from './dto/get-author.args';
-import { BaseResolver } from '../../shared/graphql/resolvers/base.resolver';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from "@nestjs/graphql";
+import { Author } from "./models/author.model";
+import { AuthorsService } from "./authors.service";
+import { Post } from "../posts/models/post.model";
+import { PostsService } from "../posts/posts.service";
+import { DataloaderService } from "../../shared/dataloader/dataloader.service";
+import { GetAuthorArgs } from "./dto/get-author.args";
+import { UpvotePostInput } from "../posts/dto/upvote-post.input";
+import { BaseResolver } from "../../shared/graphql/resolvers/base.resolver";
 
 @Resolver(() => Author)
 export class AuthorsResolver extends BaseResolver(Author) {
   constructor(
     private authorsService: AuthorsService,
+    private postsService: PostsService,
     private dataloaderService: DataloaderService,
   ) {
     super();
@@ -25,18 +36,23 @@ export class AuthorsResolver extends BaseResolver(Author) {
   // - findOneAuthor(id): calls authorsService.findOne(id)
 
   // Custom query specific to Authors
-  @Query(() => [Author], { name: 'searchAuthors' })
+  @Query(() => [Author], { name: "searchAuthors" })
   async searchAuthors(@Args() getAuthorArgs: GetAuthorArgs): Promise<Author[]> {
     const { firstName, lastName, offset, limit } = getAuthorArgs;
     const results = this.authorsService.findByName(firstName, lastName);
-    
+
     // Apply pagination
     return results.slice(offset, offset + limit);
   }
 
-  @ResolveField('posts', () => [Post])
+  @ResolveField("posts", () => [Post])
   async posts(@Parent() author: Author): Promise<Post[]> {
     // Uses DataLoader to batch requests - solves N+1 problem!
     return this.dataloaderService.getPostsByAuthorLoader().load(author.id);
+  }
+
+  @Mutation(() => Post, { name: "upvotePost" })
+  async upvotePost(@Args('input') input: UpvotePostInput) {
+    return this.postsService.upvoteById({ id: input.postId });
   }
 }
