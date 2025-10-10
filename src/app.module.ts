@@ -9,6 +9,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { TasksModule } from "./modules/tasks/tasks.module";
 import { AuthorsModule } from "./modules/authors/authors.module";
 import { PostsModule } from "./modules/posts/posts.module";
+import { EventsModule } from "./modules/events/events.module";
 import { validationSchema } from "./config/validation.schema";
 import { CacheModule } from "@nestjs/cache-manager";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -48,6 +49,7 @@ import { appConfig } from "./config";
     TasksModule,
     AuthorsModule,
     PostsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
