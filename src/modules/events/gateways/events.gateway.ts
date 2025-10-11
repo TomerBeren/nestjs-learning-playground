@@ -14,7 +14,7 @@ import { Server, Socket } from "socket.io";
 import { Logger, UseFilters } from "@nestjs/common";
 import { Observable, from } from "rxjs";
 import { map } from "rxjs/operators";
-import { AllExceptionsFilter } from "./filters";
+import { AllExceptionsFilter } from "../filters";
 
 @WebSocketGateway({
   namespace: "events",

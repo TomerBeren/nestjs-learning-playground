@@ -2,8 +2,8 @@ import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, EventPattern, Payload, Ctx, RedisContext } from '@nestjs/microservices';
 
 @Controller()
-export class EventsController {
-  private readonly logger = new Logger(EventsController.name);
+export class RedisEventsController {
+  private readonly logger = new Logger(RedisEventsController.name);
 
   /**
    * Message Pattern - Request/Response

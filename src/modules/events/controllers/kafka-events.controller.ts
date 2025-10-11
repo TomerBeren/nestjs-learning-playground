@@ -2,8 +2,8 @@ import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, EventPattern, Payload, Ctx, KafkaContext } from '@nestjs/microservices';
 
 @Controller()
-export class EventsKafkaController {
-  private readonly logger = new Logger(EventsKafkaController.name);
+export class KafkaEventsController {
+  private readonly logger = new Logger(KafkaEventsController.name);
 
   /**
    * Kafka Message Pattern - Request/Response
