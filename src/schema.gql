@@ -3,6 +3,8 @@
 # ------------------------------------------------------
 
 type Author {
+  """Only accessible by MODERATOR and ADMIN users"""
+  email: String
   firstName: String
   id: Int!
   lastName: String

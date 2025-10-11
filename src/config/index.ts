@@ -3,3 +3,8 @@ export { default as databaseConfig } from './database.config';
 export { default as authConfig } from './auth.config';
 export { default as featuresConfig } from './features.config';
 export { default as graphqlConfig } from './graphql.config';
+export { default as redisConfig } from './redis.config';
+export { default as kafkaConfig } from './kafka.config';
+export { validationSchema } from './validation.schema';
+export { getRedisConfig } from './redis.config';
+export { getKafkaConfig } from './kafka.config';

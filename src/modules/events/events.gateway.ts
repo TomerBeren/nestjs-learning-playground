@@ -7,14 +7,19 @@ import {
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+  WsResponse,
+  WsException,
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { Logger, UseFilters } from "@nestjs/common";
+import { Observable, from } from "rxjs";
+import { map } from "rxjs/operators";
+import { AllExceptionsFilter } from "./filters";
 
-@WebSocketGateway(80, { 
-  namespace: 'events',
+@WebSocketGateway({
+  namespace: "events",
   cors: {
-    origin: '*', // Configure this properly in production
+    origin: "*", // Configure this properly in production
   },
 })
 export class EventsGateway
@@ -23,13 +28,13 @@ export class EventsGateway
   @WebSocketServer()
   server: Server;
 
-  private logger: Logger = new Logger('EventsGateway');
+  private logger: Logger = new Logger("EventsGateway");
 
   /**
    * Called once the gateway is initialized
    */
   afterInit(server: Server) {
-    this.logger.log('WebSocket Gateway initialized');
+    this.logger.log("WebSocket Gateway initialized");
   }
 
   /**
@@ -49,53 +54,95 @@ export class EventsGateway
   /**
    * Listen for 'message' events from clients
    */
-  @SubscribeMessage('message')
+  @SubscribeMessage("message")
   handleMessage(
     @MessageBody() data: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket
   ): string {
     this.logger.log(`Message received from ${client.id}: ${data}`);
     return `Echo: ${data}`;
   }
 
   /**
+   * Simple event handler with exception filter
+   * Returns a WsResponse object
+   * Send data with {error: true} to test WsException
+   * Send data with {crash: true} to test regular exception
+   */
+  @UseFilters(new AllExceptionsFilter())
+  @SubscribeMessage("events")
+  onEvent(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any
+  ): WsResponse<any> {
+    this.logger.log(
+      `Event received from ${client.id}: ${JSON.stringify(data)}`
+    );
+
+    this.logger.log(data.error)
+    // Trigger WsException
+    if (data?.error === true) {
+      throw new WsException("This is a test WsException!");
+    }
+
+    // Trigger regular JavaScript error
+    if (data?.crash === true) {
+      throw new TypeError("This is a regular TypeError - not a WsException!");
+    }
+
+    const event = "events";
+    return { event, data };
+  }
+
+  /**
+   * Multiple responses example using Observable
+   * Emits array values one by one
+   */
+  @SubscribeMessage("events-stream")
+  onEventStream(@MessageBody() data: unknown): Observable<WsResponse<number>> {
+    const event = "events-stream";
+    const response = [1, 2, 3];
+
+    this.logger.log(`Streaming events: ${response}`);
+    return from(response).pipe(map((data) => ({ event, data })));
+  }
+
+  /**
    * Listen for 'join-room' events
    */
-  @SubscribeMessage('join-room')
+  @SubscribeMessage("join-room")
   handleJoinRoom(
     @MessageBody() room: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket
   ): void {
     client.join(room);
     this.logger.log(`Client ${client.id} joined room: ${room}`);
-    client.emit('joined-room', room);
+    client.emit("joined-room", room);
   }
 
   /**
    * Listen for 'leave-room' events
    */
-  @SubscribeMessage('leave-room')
+  @SubscribeMessage("leave-room")
   handleLeaveRoom(
     @MessageBody() room: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket
   ): void {
     client.leave(room);
     this.logger.log(`Client ${client.id} left room: ${room}`);
-    client.emit('left-room', room);
+    client.emit("left-room", room);
   }
 
   /**
    * Broadcast a message to a specific room
    */
-  @SubscribeMessage('room-message')
+  @SubscribeMessage("room-message")
   handleRoomMessage(
     @MessageBody() payload: { room: string; message: string },
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket
   ): void {
-    this.logger.log(
-      `Broadcasting to room ${payload.room}: ${payload.message}`,
-    );
-    this.server.to(payload.room).emit('room-message', {
+    this.logger.log(`Broadcasting to room ${payload.room}: ${payload.message}`);
+    this.server.to(payload.room).emit("room-message", {
       clientId: client.id,
       message: payload.message,
     });
@@ -105,19 +152,19 @@ export class EventsGateway
    * Send multiple responses by emitting directly to the client
    * Client will receive 3 separate messages
    */
-  @SubscribeMessage('ping')
+  @SubscribeMessage("ping")
   handlePing(@ConnectedSocket() client: Socket): void {
     this.logger.log(`Ping received from ${client.id}`);
-    
+
     // Send multiple responses
-    client.emit('pong', { count: 1, message: 'First response' });
-    
+    client.emit("pong", { count: 1, message: "First response" });
+
     setTimeout(() => {
-      client.emit('pong', { count: 2, message: 'Second response' });
+      client.emit("pong", { count: 2, message: "Second response" });
     }, 1000);
-    
+
     setTimeout(() => {
-      client.emit('pong', { count: 3, message: 'Third response' });
+      client.emit("pong", { count: 3, message: "Third response" });
     }, 2000);
   }
 

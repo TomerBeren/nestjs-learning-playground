@@ -25,6 +25,17 @@ export const validationSchema = Joi.object({
   GRAPHQL_SORT_SCHEMA: Joi.boolean().default(true),
   GRAPHQL_INTROSPECTION: Joi.boolean().default(true),
   
+  // Redis Microservice config
+  REDIS_HOST: Joi.string().default('localhost'),
+  REDIS_PORT: Joi.number().port().default(6379),
+  REDIS_RETRY_ATTEMPTS: Joi.number().default(10),
+  REDIS_RETRY_DELAY: Joi.number().default(3000),
+  
+  // Kafka Microservice config
+  KAFKA_CLIENT_ID: Joi.string().default('nestdocs-app'),
+  KAFKA_GROUP_ID: Joi.string().default('nestdocs-consumer'),
+  KAFKA_BROKERS: Joi.string().default('localhost:9092'),
+  
   // Other config
   CORS_ENABLED: Joi.boolean().default(true),
 });
