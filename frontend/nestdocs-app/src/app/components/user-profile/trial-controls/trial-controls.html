@@ -1,0 +1,61 @@
+<div class="mt-6 space-y-4">
+  <!-- Trial Control Buttons -->
+  <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+    <h3 class="font-semibold text-gray-800 mb-3">🧪 Test Angular Signals (Live Demo)</h3>
+    <div class="flex gap-3">
+      <button 
+        (click)="onActivateTrial()"
+        [disabled]="isTrial()"
+        [class.opacity-50]="isTrial()"
+        [class.cursor-not-allowed]="isTrial()"
+        class="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+      >
+        {{ isTrial() ? '✓ Trial Active' : '⭐ Activate Trial' }}
+      </button>
+      
+      <button 
+        (click)="onExpireTrial()"
+        [disabled]="!isTrial() || isTrialExpired()"
+        [class.opacity-50]="!isTrial() || isTrialExpired()"
+        [class.cursor-not-allowed]="!isTrial() || isTrialExpired()"
+        class="flex-1 bg-red-500 hover:bg-red-600 disabled:hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+      >
+        {{ isTrialExpired() ? '✓ Expired' : '⏰ Expire Trial' }}
+      </button>
+      
+      <button 
+        (click)="onResetTrial()"
+        class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+      >
+        🔄 Reset
+      </button>
+    </div>
+    
+    <!-- Signal State Display -->
+    <div class="mt-3 p-3 bg-white rounded border border-blue-200">
+      <p class="text-xs font-mono text-gray-600">
+        <strong>Signals State:</strong><br>
+        isTrial: <span class="text-blue-600">{{ isTrial() }}</span> | 
+        isTrialExpired: <span class="text-red-600">{{ isTrialExpired() }}</span> | 
+        showTrialDuration: <span class="text-green-600">{{ showTrialDuration() }}</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Regular Action Buttons -->
+  <div class="flex gap-4">
+    <button 
+      (click)="onEditProfile()"
+      class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+    >
+      Edit Profile
+    </button>
+    
+    <button 
+      (click)="onViewActivity()"
+      class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+    >
+      View Activity
+    </button>
+  </div>
+</div>

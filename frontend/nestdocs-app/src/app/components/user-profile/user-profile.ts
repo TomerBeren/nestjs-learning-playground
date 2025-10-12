@@ -1,70 +1,66 @@
-import { Component, signal, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { ProfileHeader } from './profile-header/profile-header';
+import { UserBadgeList } from './user-badge-list/user-badge-list';
+import { ProfileEditor } from './profile-editor/profile-editor';
+import { ProfileInfo } from './profile-info/profile-info';
+import { TrialControls } from './trial-controls/trial-controls';
+import { BadgeService, TrialService, UserDataService, ProfileActionService } from './services';
 
+/**
+ * UserProfile Component - ORCHESTRATOR (Container Pattern)
+ * 
+ * Responsibilities:
+ * - Inject services (Dependency Injection)
+ * - Compose child components
+ * - Wire up data flow between services and presentation
+ * 
+ * Does NOT contain:
+ * - Business logic (moved to services)
+ * - Presentation logic (moved to child components)
+ * - State management (moved to services)
+ */
 @Component({
   selector: 'user-profile',
-  imports: [FormsModule],
+  imports: [ProfileHeader, UserBadgeList, ProfileEditor, ProfileInfo, TrialControls],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss',
 })
 export class UserProfile {
-  // Signal binding example - reactive username
-  userName = signal('John Doe');
-  userEmail = signal('john.doe@example.com');
+  // Inject services - each handles ONE responsibility
+  private badgeService = inject(BadgeService);
+  private trialService = inject(TrialService);
+  private userDataService = inject(UserDataService);
+  private profileActionService = inject(ProfileActionService);
 
-  // Trial management signals
-  isTrial = signal(false);
-  isTrialExpired = signal(false);
-  showTrialDuration = computed(() => this.isTrial() && !this.isTrialExpired());
+  // Expose service signals to template (delegation pattern)
+  // Badge-related
+  readonly badges = this.badgeService.badges;
+  
+  // Trial-related
+  readonly isTrial = this.trialService.isTrial;
+  readonly isTrialExpired = this.trialService.isTrialExpired;
+  readonly showTrialDuration = this.trialService.showTrialDuration;
+  
+  // User data-related
+  readonly userName = this.userDataService.userName;
+  readonly userEmail = this.userDataService.userEmail;
 
-  // Computed signal example - derives from userName
-  displayName = computed(() => `👤 ${this.userName()}`);
-  emailDomain = computed(() => ` ${this.userEmail().split('@')[1] || 'unknown'}`);
+  // Delegate badge actions to BadgeService
+  addBadge = () => this.badgeService.addBadge();
+  removeBadge = (id: number) => this.badgeService.removeBadge(id);
+  clearBadges = () => this.badgeService.clearBadges();
 
-  // User badges - dynamic list with @for demo
-  badges = signal([
-    { id: 1, name: '🌟 Early Adopter', color: 'blue' },
-    { id: 2, name: '🚀 Pro Developer', color: 'purple' },
-    { id: 3, name: '💎 Premium Member', color: 'yellow' },
-  ]);
+  // Delegate trial actions to TrialService
+  activateTrial = () => this.trialService.activateTrial();
+  expireTrial = () => this.trialService.expireTrial();
+  resetTrial = () => this.trialService.resetTrial();
 
-  // Computed: count of badges
-  badgeCount = computed(() => this.badges().length);
+  // Delegate user data actions to UserDataService
+  updateUserName = (name: string) => this.userDataService.updateUserName(name);
+  updateUserEmail = (email: string) => this.userDataService.updateUserEmail(email);
 
-  addBadge() {
-    const newBadges = [
-      { id: 4, name: '🏆 Achievement Hunter', color: 'green' },
-      { id: 5, name: '🔥 Streak Master', color: 'red' },
-      { id: 6, name: '⭐ Top Contributor', color: 'orange' },
-      { id: 7, name: '🎯 Goal Setter', color: 'pink' },
-    ];
-    
-    const currentBadges = this.badges();
-    const nextBadge = newBadges[currentBadges.length - 3];
-    
-    if (nextBadge) {
-      this.badges.set([...currentBadges, nextBadge]);
-    }
-  }
-
-  removeBadge(badgeId: number) {
-    this.badges.update(current => current.filter(b => b.id !== badgeId));
-  }
-
-  activateTrial() {
-    this.isTrial.set(true);
-  }
-
-  resetTrial() {
-    this.isTrial.set(false);
-    this.isTrialExpired.set(false);
-  }
-
-  editProfile() {
-    alert('Edit profile clicked! 🎉\n(No backend connection yet)');
-  }
-
-  viewActivity() {
-    alert('View activity clicked! 📊\n(No backend connection yet)');
-  }
+  // Delegate profile actions to ProfileActionService
+  editProfile = () => this.profileActionService.editProfile();
+  viewActivity = () => this.profileActionService.viewActivity();
 }
+
