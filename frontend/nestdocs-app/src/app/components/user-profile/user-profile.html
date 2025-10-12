@@ -1,8 +1,27 @@
 <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
-  <!-- Header Section -->
-  <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white">
-    <h1 class="text-3xl font-bold mb-2">User Profile</h1>
-    <p class="text-blue-100">Manage your personal information</p>
+  <!-- Header Section with Dynamic Trial Badge -->
+  <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white relative">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold mb-2">User Profile</h1>
+        <p class="text-blue-100">Manage your personal information</p>
+      </div>
+      
+      <!-- Dynamic Trial Badge using signals -->
+      @if (isTrial()) {
+        <div class="absolute top-4 right-4">
+          @if (isTrialExpired()) {
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-500 text-white shadow-lg animate-pulse">
+              ⚠️ Trial Expired
+            </span>
+          } @else {
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-yellow-400 text-yellow-900 shadow-lg">
+              ⭐ Trial Active
+            </span>
+          }
+        </div>
+      }
+    </div>
   </div>
 
   <!-- Profile Info Section -->
@@ -25,27 +44,94 @@
         </span>
       </div>
       
+      <div class="flex items-center border-b border-gray-200 pb-4">
+        <span class="font-semibold text-gray-700 w-40">Account Type:</span>
+        @if (isTrial()) {
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+            Trial User
+          </span>
+        } @else {
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            Free User
+          </span>
+        }
+      </div>
+
+      <!-- Show trial duration using computed signal -->
+      @if (showTrialDuration()) {
+        <div class="flex items-center border-b border-gray-200 pb-4">
+          <span class="font-semibold text-gray-700 w-40">Trial Duration:</span>
+          <span class="text-gray-900">14 days remaining</span>
+        </div>
+      }
+      
       <div class="flex items-center">
         <span class="font-semibold text-gray-700 w-40">Member Since:</span>
         <span class="text-gray-900">October 2025</span>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="mt-6 flex gap-4">
-      <button 
-        (click)="editProfile()"
-        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-      >
-        Edit Profile
-      </button>
-      
-      <button 
-        (click)="viewActivity()"
-        class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-      >
-        View Activity
-      </button>
+    <!-- Action Buttons with Signal Controls -->
+    <div class="mt-6 space-y-4">
+      <!-- Trial Control Buttons -->
+      <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+        <h3 class="font-semibold text-gray-800 mb-3">🧪 Test Angular Signals (Live Demo)</h3>
+        <div class="flex gap-3">
+          <button 
+            (click)="activateTrial()"
+            [disabled]="isTrial()"
+            [class.opacity-50]="isTrial()"
+            [class.cursor-not-allowed]="isTrial()"
+            class="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+          >
+            {{ isTrial() ? '✓ Trial Active' : '⭐ Activate Trial' }}
+          </button>
+          
+          <button 
+            (click)="isTrialExpired.set(true)"
+            [disabled]="!isTrial() || isTrialExpired()"
+            [class.opacity-50]="!isTrial() || isTrialExpired()"
+            [class.cursor-not-allowed]="!isTrial() || isTrialExpired()"
+            class="flex-1 bg-red-500 hover:bg-red-600 disabled:hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+          >
+            {{ isTrialExpired() ? '✓ Expired' : '⏰ Expire Trial' }}
+          </button>
+          
+          <button 
+            (click)="resetTrial()"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md"
+          >
+            🔄 Reset
+          </button>
+        </div>
+        
+        <!-- Signal State Display -->
+        <div class="mt-3 p-3 bg-white rounded border border-blue-200">
+          <p class="text-xs font-mono text-gray-600">
+            <strong>Signals State:</strong><br>
+            isTrial: <span class="text-blue-600">{{ isTrial() }}</span> | 
+            isTrialExpired: <span class="text-red-600">{{ isTrialExpired() }}</span> | 
+            showTrialDuration: <span class="text-green-600">{{ showTrialDuration() }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Regular Action Buttons -->
+      <div class="flex gap-4">
+        <button 
+          (click)="editProfile()"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          Edit Profile
+        </button>
+        
+        <button 
+          (click)="viewActivity()"
+          class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          View Activity
+        </button>
+      </div>
     </div>
   </div>
 </div>
