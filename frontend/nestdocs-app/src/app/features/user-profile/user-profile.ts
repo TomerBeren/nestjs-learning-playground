@@ -47,7 +47,7 @@ export class UserProfile {
 
   // Delegate badge actions to BadgeService
   addBadge = () => this.badgeService.addBadge();
-  removeBadge = (id: number) => this.badgeService.removeBadge(id);
+  removeBadge = (id: string) => this.badgeService.removeBadge(id);
   clearBadges = () => this.badgeService.clearBadges();
 
   // Delegate trial actions to TrialService

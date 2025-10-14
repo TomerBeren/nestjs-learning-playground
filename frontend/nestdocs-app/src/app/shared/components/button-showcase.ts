@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton } from './buttons';
+import { PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton } from '../directives';
 
 @Component({
   selector: 'button-showcase',

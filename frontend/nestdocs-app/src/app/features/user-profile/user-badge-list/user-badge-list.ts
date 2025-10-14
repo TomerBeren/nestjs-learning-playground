@@ -1,10 +1,5 @@
 import { Component, input, output, computed } from '@angular/core';
-
-export interface Badge {
-  id: number;
-  name: string;
-  color: string;
-}
+import { Badge } from '../models';
 
 @Component({
   selector: 'user-badge-list',
@@ -16,7 +11,7 @@ export class UserBadgeList {
   badges = input.required<Badge[]>();
   
   badgeAdded = output<void>();
-  badgeRemoved = output<number>();
+  badgeRemoved = output<string>();
   badgesCleared = output<void>();
   
   badgeCount = computed(() => this.badges().length);
@@ -25,7 +20,7 @@ export class UserBadgeList {
     this.badgeAdded.emit();
   }
   
-  onRemoveBadge(badgeId: number) {
+  onRemoveBadge(badgeId: string) {
     this.badgeRemoved.emit(badgeId);
   }
   

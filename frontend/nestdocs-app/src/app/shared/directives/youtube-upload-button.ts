@@ -49,7 +49,4 @@ import { Component, input, output } from '@angular/core';
     `,
   ],
 })
-export class YouTubeUploadButton {
-  size = input<'small' | 'medium' | 'large'>('medium');
-  uploading = input<boolean>(false);
-}
+export class YouTubeUploadButton {}

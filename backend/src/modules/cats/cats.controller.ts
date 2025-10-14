@@ -18,14 +18,12 @@ import { Roles } from "../../core/common/decorators/roles.decorator";
 import { User } from "../../core/common/decorators/user.decorator";
 import { LoggingInterceptor } from "../../core/common/interceptors/logging.interceptor";
 import { CacheInterceptor } from "../../core/common/interceptors/cache.interceptor";
-import { TransformInterceptor } from "../../core/common/interceptors/transform.interceptor";
 import { TimeoutInterceptor } from "../../core/common/interceptors/timeout.interceptor";
 
 @Controller("cats")
 @UseGuards(RolesGuard)
 @UseInterceptors(
   LoggingInterceptor,
-  TransformInterceptor,
   CacheInterceptor,
   TimeoutInterceptor
 )
