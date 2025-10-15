@@ -1,37 +1,25 @@
 import { Component } from '@angular/core';
-import { ContentProjectionCard } from '../../shared/components/content-projection-card';
-import { StarRating } from '../../shared/components/star-rating';
+import {
+  ProductCard,
+  UserProfileCard,
+  BlogPostCard,
+  NotificationCard,
+  StarRating
+} from '../../shared/components';
 
 @Component({
   selector: 'content-projection-demo',
   standalone: true,
-  imports: [ContentProjectionCard, StarRating],
+  imports: [ProductCard, UserProfileCard, BlogPostCard, NotificationCard, StarRating],
   template: `
     <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-      <h3 class="text-xl font-semibold text-white mb-6">📄 Content Projection Demo</h3>
+      <h3 class="text-xl font-semibold text-white mb-6">📄 SOLID Content Projection Demo</h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Product Card -->
-        <content-projection-card>
-          <div card-header class="flex items-center justify-between">
-            <h4 class="text-lg font-semibold text-white">Premium Headphones</h4>
-            <span class="text-green-400 font-bold">$299</span>
-          </div>
-
-          <div card-body>
-            <p class="text-white/80 mb-3">High-quality wireless headphones with noise cancellation and premium sound quality.</p>
-            <div class="flex items-center gap-2 mb-3">
-              <span class="text-white/90">Rating:</span>
-              <star-rating [rating]="4"></star-rating>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-sm">Wireless</span>
-              <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-sm">Noise Canceling</span>
-              <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-sm">Premium</span>
-            </div>
-          </div>
-
-          <div card-footer class="flex gap-3">
+        <!-- Product Card - SOLID Implementation -->
+        <product-card [product]="productData">
+          <star-rating product-rating [rating]="4"></star-rating>
+          <div product-actions class="flex gap-3">
             <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
               Add to Cart
             </button>
@@ -39,38 +27,11 @@ import { StarRating } from '../../shared/components/star-rating';
               View Details
             </button>
           </div>
-        </content-projection-card>
+        </product-card>
 
-        <!-- User Profile Card -->
-        <content-projection-card>
-          <div card-header class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-              <span class="text-white font-bold text-lg">JD</span>
-            </div>
-            <div>
-              <h4 class="text-lg font-semibold text-white">John Doe</h4>
-              <p class="text-white/70 text-sm">Premium Member</p>
-            </div>
-          </div>
-
-          <div card-body>
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span class="text-white/90">Email:</span>
-                <span class="text-white">john.doe@example.com</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-white/90">Joined:</span>
-                <span class="text-white">Jan 2024</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-white/90">Orders:</span>
-                <span class="text-white">24</span>
-              </div>
-            </div>
-          </div>
-
-          <div card-footer class="flex gap-3">
+        <!-- User Profile Card - SOLID Implementation -->
+        <user-profile-card [user]="userData">
+          <div profile-actions class="flex gap-3">
             <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">
               Edit Profile
             </button>
@@ -78,63 +39,18 @@ import { StarRating } from '../../shared/components/star-rating';
               Logout
             </button>
           </div>
-        </content-projection-card>
+        </user-profile-card>
 
-        <!-- Blog Post Card -->
-        <content-projection-card>
-          <div card-header>
-            <h4 class="text-lg font-semibold text-white">Angular Content Projection Guide</h4>
-            <div class="flex items-center gap-2 mt-2">
-              <span class="text-white/70 text-sm">By Sarah Wilson</span>
-              <span class="text-white/50">•</span>
-              <span class="text-white/70 text-sm">5 min read</span>
-            </div>
-          </div>
+        <!-- Blog Post Card - SOLID Implementation -->
+        <blog-post-card [post]="postData">
+          <button post-actions class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
+            Read More
+          </button>
+        </blog-post-card>
 
-          <div card-body>
-            <p class="text-white/80 mb-3">
-              Content projection is a powerful feature in Angular that allows you to create reusable components
-              that can accept content from their parent components...
-            </p>
-            <div class="flex flex-wrap gap-2">
-              <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-sm">Angular</span>
-              <span class="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded text-sm">Components</span>
-              <span class="bg-pink-500/20 text-pink-300 px-2 py-1 rounded text-sm">Tutorial</span>
-            </div>
-          </div>
-
-          <div card-footer class="flex justify-between items-center">
-            <div class="flex items-center gap-4">
-              <button class="text-blue-400 hover:text-blue-300 transition-colors">👍 42</button>
-              <button class="text-green-400 hover:text-green-300 transition-colors">💬 8</button>
-            </div>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
-              Read More
-            </button>
-          </div>
-        </content-projection-card>
-
-        <!-- Notification Card -->
-        <content-projection-card>
-          <div card-header class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-              <span class="text-white text-sm">⚠️</span>
-            </div>
-            <h4 class="text-lg font-semibold text-white">System Update Available</h4>
-          </div>
-
-          <div card-body>
-            <p class="text-white/80">
-              A new version of the application is available. Update now to get the latest features and security improvements.
-            </p>
-            <div class="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded">
-              <p class="text-yellow-300 text-sm">
-                <strong>What's new:</strong> Improved performance, bug fixes, and new UI components.
-              </p>
-            </div>
-          </div>
-
-          <div card-footer class="flex gap-3">
+        <!-- Notification Card - SOLID Implementation -->
+        <notification-card [notification]="notificationData">
+          <div notification-actions class="flex gap-3">
             <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded transition-colors">
               Update Now
             </button>
@@ -142,9 +58,69 @@ import { StarRating } from '../../shared/components/star-rating';
               Remind Later
             </button>
           </div>
-        </content-projection-card>
+        </notification-card>
+      </div>
+
+      <!-- SOLID Principles Explanation -->
+      <div class="mt-8 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+        <h4 class="text-lg font-semibold text-blue-300 mb-3">🎯 SOLID Principles Applied:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-white/80">
+          <div>
+            <strong class="text-blue-300">Single Responsibility:</strong> Each card component has one job
+          </div>
+          <div>
+            <strong class="text-blue-300">Open/Closed:</strong> Extended functionality without modifying base
+          </div>
+          <div>
+            <strong class="text-blue-300">Liskov Substitution:</strong> All cards work with BaseCard interface
+          </div>
+          <div>
+            <strong class="text-blue-300">Interface Segregation:</strong> Specific interfaces for each card type
+          </div>
+          <div>
+            <strong class="text-blue-300">Dependency Inversion:</strong> Depends on abstractions, not concretions
+          </div>
+        </div>
       </div>
     </div>
   `
 })
-export class ContentProjectionDemo {}
+export class ContentProjectionDemo {
+  productData = {
+    name: 'Premium Headphones',
+    price: '$299',
+    description: 'High-quality wireless headphones with noise cancellation and premium sound quality.',
+    tags: ['Wireless', 'Noise Canceling', 'Premium']
+  };
+
+  userData = {
+    name: 'John Doe',
+    initials: 'JD',
+    role: 'Premium Member',
+    stats: [
+      { label: 'Email', value: 'john.doe@example.com' },
+      { label: 'Joined', value: 'Jan 2024' },
+      { label: 'Orders', value: '24' }
+    ]
+  };
+
+  postData = {
+    title: 'Angular Content Projection Guide',
+    author: 'Sarah Wilson',
+    readTime: '5 min read',
+    excerpt: 'Content projection is a powerful feature in Angular that allows you to create reusable components...',
+    tags: ['Angular', 'Components', 'Tutorial'],
+    likes: 42,
+    comments: 8
+  };
+
+  notificationData = {
+    title: 'System Update Available',
+    message: 'A new version of the application is available. Update now to get the latest features and security improvements.',
+    icon: '⚠️',
+    details: {
+      title: 'What\'s new',
+      description: 'Improved performance, bug fixes, and new UI components.'
+    }
+  };
+}
