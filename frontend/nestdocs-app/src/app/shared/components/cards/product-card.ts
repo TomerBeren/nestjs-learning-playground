@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { BaseCard } from './base-card';
 import { DEFAULT_CARD_CONFIG } from './card.interfaces';
 
@@ -9,6 +9,7 @@ import { DEFAULT_CARD_CONFIG } from './card.interfaces';
 @Component({
   selector: 'product-card',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🎯 Performance optimization
   template: `
     <base-card [config]="config">
       <div card-header class="flex items-center justify-between">

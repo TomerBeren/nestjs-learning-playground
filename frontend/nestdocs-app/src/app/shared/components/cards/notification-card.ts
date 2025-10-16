@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { BaseCard } from './base-card';
 import { DEFAULT_CARD_CONFIG, CardConfig, CardTheme } from './card.interfaces';
 
@@ -9,6 +9,7 @@ import { DEFAULT_CARD_CONFIG, CardConfig, CardTheme } from './card.interfaces';
 @Component({
   selector: 'notification-card',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🎯 Performance optimization
   template: `
     <base-card [config]="config">
       <div card-header class="flex items-center gap-3">

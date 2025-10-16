@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton } from '../directives';
 
 @Component({
   selector: 'button-showcase',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🎯 Performance optimization
   imports: [PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton],
   template: `
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-8 mb-8">
       <h2 class="text-3xl font-bold text-gray-800 mb-6">🎨 Button Showcase</h2>
-      
+
       <div class="space-y-6">
         <!-- YouTube Upload Button -->
         <div class="p-6 bg-gray-50 rounded-lg">
@@ -62,7 +63,9 @@ import { PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton } from 
         </div>
 
         <!-- Combined Example -->
-        <div class="p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200">
+        <div
+          class="p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200"
+        >
           <h3 class="text-lg font-semibold text-gray-700 mb-3">🎬 Action Panel Example</h3>
           <div class="flex gap-3 flex-wrap">
             <button yt-upload>Upload to YouTube</button>
@@ -74,10 +77,12 @@ import { PrimaryButton, DangerButton, SuccessButton, YouTubeUploadButton } from 
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class ButtonShowcase {}

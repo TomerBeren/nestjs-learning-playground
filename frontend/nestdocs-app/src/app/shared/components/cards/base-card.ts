@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CardConfig, DEFAULT_CARD_CONFIG, CardTheme, CardLayout } from './card.interfaces';
 
 /**
@@ -9,6 +9,7 @@ import { CardConfig, DEFAULT_CARD_CONFIG, CardTheme, CardLayout } from './card.i
 @Component({
   selector: 'base-card',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🎯 Performance optimization
   template: `
     <div [class]="cardClasses()">
       <!-- Header projection - conditionally rendered -->
